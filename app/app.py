@@ -1,6 +1,6 @@
 
 import logging
-
+import requests
 BASE_URL = "http://swapi.co/api/"
 import utils
 import collections
@@ -21,13 +21,14 @@ def main():
     people.sort(key=lambda x: int(x['height']), reverse=True)
     for person in people:
         print(person['height'])
-    with open('chars.csv', 'w', newline='') as csvfile:
+    with open("chars.csv", "w", newline="") as csvfile:
         writer = csv.writer(csvfile, quoting=csv.QUOTE_MINIMAL)
         writer.writerow(["name", "species", "height", "appearances"])
         for char in people:
             writer.writerow([char['name'], utils.get_one(char['species'][0])['name'], char['height'], len(char['films'])])
-    
-
+    with open("chars.csv", "r") as csvfile:
+        res = requests.post("http://httpbin.org/post", files={"chars.csv": csvfile})
+        print("res: " + str(res))
 
 
 if __name__ == "__main__":
