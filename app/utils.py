@@ -8,10 +8,10 @@ def get_all(current_url):
     result_objects=[]
     for url in urls:
         logging.debug("Making request to URL: " + url)
-        print("Making request to URL: " + url)
         response = requests.get(url=url)
         if response.status_code != 200:
-            raise Exception(f"Received status code of {response.status_code}!")
+            logging.error(f"Received HTTP status code of {response.status_code}!\nResponse: {str(response)}")
+            raise Exception()
         else:
             response_obj = json.loads(response.content)
             if response_obj.get('next'):
@@ -24,5 +24,14 @@ def get_all(current_url):
 def get_one(current_url): #assume json
     response = requests.get(url=current_url)
     if response.status_code != 200:
-        raise Exception(f"Received status code of {response.status_code}!")
+        logging.error(f"Received HTTP status code of {response.status_code}!\nResponse: {str(response)}")
+        raise Exception()
     return json.loads(response.content)
+    
+    
+def send_file_to_url(url, file_name):
+    with open(file_name, "r") as csvfile:
+        response = requests.post(url, files={file_name: csvfile})
+        if response.status_code != 200:
+            logging.error(f"Received HTTP status code of {response.status_code}!\nResponse: {str(response)}")
+            raise Exception()

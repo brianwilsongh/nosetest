@@ -1,7 +1,6 @@
 
 import logging
 import requests
-BASE_URL = "http://swapi.co/api/"
 import utils
 import collections
 import csv
@@ -14,21 +13,25 @@ import csv
 # TODO: 4. Send the CSV to httpbin.org
 # TODO: 5. Create automated tests that validate your code
 
+BASE_URL = "http://swapi.co/api/"
+PASTEBIN = "http://httpbin.org/post"
+DEFAULT_FILENAME = "file.csv"
+
 def main():
+    logging.basicConfig(format='%(asctime)s,%(msecs)d %(levelname)-8s [%(filename)s:%(lineno)d] %(message)s',
+    datefmt='%Y-%m-%d:%H:%M:%S', level=logging.DEBUG)
+    # logging.getLogger().setLevel(logging.DEBUG)
+    # logging.Formatter('')
     people = utils.get_all(BASE_URL+"people")
     people.sort(key=lambda x: len(x['films']), reverse=True)
     people = people[:9]
     people.sort(key=lambda x: int(x['height']), reverse=True)
-    for person in people:
-        print(person['height'])
-    with open("chars.csv", "w", newline="") as csvfile:
+    with open(DEFAULT_FILENAME, "w", newline="") as csvfile:
         writer = csv.writer(csvfile, quoting=csv.QUOTE_MINIMAL)
         writer.writerow(["name", "species", "height", "appearances"])
         for char in people:
             writer.writerow([char['name'], utils.get_one(char['species'][0])['name'], char['height'], len(char['films'])])
-    with open("chars.csv", "r") as csvfile:
-        res = requests.post("http://httpbin.org/post", files={"chars.csv": csvfile})
-        print("res: " + str(res))
+    utils.send_file_to_url(PASTEBIN, DEFAULT_FILENAME)
 
 
 if __name__ == "__main__":
