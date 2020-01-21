@@ -31,7 +31,11 @@ def main():
         writer.writerow(["name", "species", "height", "appearances"])
         for char in people:
             writer.writerow([char['name'], utils.get_one(char['species'][0])['name'], char['height'], len(char['films'])])
-    utils.send_file_to_url(PASTEBIN, DEFAULT_FILENAME)
+    upload_status = utils.send_file_to_url(PASTEBIN, DEFAULT_FILENAME)
+    if upload_status:
+        print("File uploaded successfully!")
+    else:
+        print("File upload unsuccessful...")
 
 
 if __name__ == "__main__":

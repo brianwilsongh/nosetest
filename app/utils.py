@@ -35,3 +35,6 @@ def send_file_to_url(url, file_name):
         if response.status_code != 200:
             logging.error(f"Received HTTP status code of {response.status_code}!\nResponse: {str(response)}")
             raise Exception()
+        else:
+            return True
+    return False
